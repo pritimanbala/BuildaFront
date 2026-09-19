@@ -1,0 +1,3 @@
+export default function GoogleButton({ label, onClick, disabled = false }) {
+  return <button className="google-button" type="button" onClick={onClick} disabled={disabled}>{label}<svg className="google-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.8 12.23c0-.71-.06-1.2-.2-1.71H12v3.45h5.64c-.11.86-.73 2.16-2.1 3.03l-.02.12 3.05 2.36.21.02c1.93-1.78 3.02-4.4 3.02-7.27Z"/><path fill="#34A853" d="M12 22c2.76 0 5.08-.91 6.77-2.47l-3.22-2.5c-.86.6-2.02 1.02-3.55 1.02-2.71 0-5.02-1.78-5.85-4.25l-3.32 2.57C4.51 19.68 7.98 22 12 22Z"/><path fill="#EA4335" d="M12 5.95c1.93 0 3.23.83 3.97 1.53l2.9-2.83C17.07 2.97 14.76 2 12 2 7.98 2 4.51 4.32 2.84 7.63l3.3 2.56C6.98 7.72 9.29 5.95 12 5.95Z"/></svg></button>
+}
