@@ -127,6 +127,17 @@ export async function signOutUser() {
   }
 }
 
+export async function linkAdminCode(code) {
+  const res = await api.post('/api/auth/link-admin', { code })
+  if (res.data?.user) {
+    setStoredUser(res.data.user)
+  } else if (res.data?.admin_linked) {
+    const cur = getStoredUser() || {}
+    setStoredUser({ ...cur, admin_linked: true })
+  }
+  return res.data
+}
+
 // Default dashboard data matching design
 export const DEFAULT_STATS = {
   totalCampaigns: { value: 0, live: 0, paused: 0, draft: 0 },
@@ -158,6 +169,7 @@ export async function fetchCurrentUser() {
       email: data.email || 'alex.joe@example.com',
       role: data.role || 'Manager',
       id: data.id,
+      admin_linked: Boolean(data.admin_linked),
     }
     setStoredUser(user)
     return user
@@ -266,6 +278,11 @@ export const DEFAULT_SETTINGS = {
   security: {
     two_factor_auth: false,
     session_timeout_minutes: 60,
+    admin_code: 'helloguys',
+  },
+  collaboration: {
+    auto_approve_members: false,
+    invite_code_expiry_days: 7,
   },
 }
 
@@ -285,6 +302,48 @@ export async function saveSettings(payload) {
   } catch (err) {
     return payload
   }
+}
+
+export async function fetchJoinStatus() {
+  try {
+    const { data } = await api.get('/api/auth/join-status')
+    return data
+  } catch (err) {
+    return { status: 'NONE', admin_linked: false }
+  }
+}
+
+export async function fetchJoinRequests() {
+  try {
+    const { data } = await api.get('/api/settings/join-requests')
+    return Array.isArray(data) ? data : []
+  } catch (err) {
+    return []
+  }
+}
+
+export async function approveJoinRequest(requestId) {
+  const { data } = await api.post(`/api/settings/join-requests/${requestId}/approve`)
+  return data
+}
+
+export async function rejectJoinRequest(requestId) {
+  const { data } = await api.post(`/api/settings/join-requests/${requestId}/reject`)
+  return data
+}
+
+export async function fetchWorkspaceMembers() {
+  try {
+    const { data } = await api.get('/api/settings/members')
+    return Array.isArray(data) ? data : []
+  } catch (err) {
+    return []
+  }
+}
+
+export async function removeWorkspaceMember(memberId) {
+  const { data } = await api.delete(`/api/settings/members/${memberId}`)
+  return data
 }
 
 // Conversations & Escalations Data
@@ -413,6 +472,42 @@ export async function fetchConversationSummary() {
   } catch (err) {
     return DEFAULT_CONVERSATION_SUMMARY
   }
+}
+
+export async function fetchConversations(campaignId = null) {
+  try {
+    const params = campaignId && campaignId !== 'ALL' ? { campaign_id: campaignId } : {}
+    const { data } = await api.get('/api/conversations', { params })
+    return Array.isArray(data) ? data : []
+  } catch (err) {
+    console.warn('Failed to fetch conversations:', err)
+    return []
+  }
+}
+
+export async function fetchConversationDetails(conversationId) {
+  const { data } = await api.get(`/api/conversations/${conversationId}`)
+  return data
+}
+
+export async function sendConversationMessage(conversationId, body, channel = null) {
+  const payload = { body }
+  if (channel) payload.channel = channel
+  const { data } = await api.post(`/api/conversations/${conversationId}/messages`, payload)
+  return data
+}
+
+export async function generateRAGReply(conversationId, feedback = null, forceRegenerate = false) {
+  const payload = {}
+  if (feedback) payload.feedback = feedback
+  if (forceRegenerate) payload.force_regenerate = forceRegenerate
+  const { data } = await api.post(`/api/conversations/${conversationId}/generate-rag-reply`, payload)
+  return data
+}
+
+export async function submitDraftToManager(conversationId, payload = {}) {
+  const { data } = await api.post(`/api/conversations/${conversationId}/submit-to-manager`, payload)
+  return data
 }
 
 export async function fetchRecentConversations() {

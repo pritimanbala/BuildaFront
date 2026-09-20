@@ -210,8 +210,8 @@ export default function Analytics() {
 
   return (
     <div className="sdr-app-layout">
-      {/* Sidebar Navigation */}
-      <Sidebar activeTab="analytics" onSelectTab={handleSelectTab} />
+      {/* Sidebar */}
+      <Sidebar activeTab="analytics" onSelectTab={handleSelectTab} userRole={user?.role} />
 
       {/* Main Content Area */}
       <main className="sdr-main">

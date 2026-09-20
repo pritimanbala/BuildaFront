@@ -91,6 +91,12 @@ export default function Campaigns() {
     loadData()
   }, [])
 
+  useEffect(() => {
+    if (user?.role === 'EXECUTIVE' || user?.role === 'EXE') {
+      navigate('/conversations')
+    }
+  }, [user])
+
   // Handle logout
   const handleSignOut = async () => {
     await signOutUser()
@@ -281,13 +287,184 @@ export default function Campaigns() {
     }
   }
 
+  const isExecutive = user?.role === 'EXECUTIVE' || user?.role === 'EXE'
+
+  if (isExecutive) {
+    return (
+      <div className="sdr-app-layout">
+        {toastMessage && <div className="sdr-toast">{toastMessage}</div>}
+        <Sidebar activeTab="campaigns" onSelectTab={handleNavSelect} userRole={user?.role} />
+        <main className="sdr-main" style={{display: 'flex', flexDirection: 'column'}}>
+          <div className="sdr-container" style={{maxWidth: '1200px'}}>
+            <Header
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              placeholder="Search prospects, campaigns..."
+              user={user}
+              onSignOut={handleSignOut}
+              killSwitchActive={killSwitchActive}
+              onToggleKillSwitch={handleToggleKillSwitch}
+            />
+
+            <section className="sdr-page-header-row" style={{marginBottom: '2rem'}}>
+              <h1 className="sdr-page-title" style={{fontSize: '32px'}}>Sales Executive Dashboard</h1>
+            </section>
+
+            <div style={{display: 'flex', gap: '2rem'}}>
+              <div style={{flex: 1}}>
+                {/* Metric Cards */}
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem'}}>
+                  <div className="sdr-settings-card" style={{padding: '1.5rem'}}>
+                    <p style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.5rem', fontWeight: 600}}>Assigned Campaigns</p>
+                    <div style={{fontSize: '32px', fontWeight: 700}}>3 <span style={{fontSize: '16px', color: 'green'}}>↗</span></div>
+                    <a href="#" style={{fontSize: '12px', color: '#6b7280', textDecoration: 'none'}}>View Details</a>
+                  </div>
+                  <div className="sdr-settings-card" style={{padding: '1.5rem'}}>
+                    <p style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.5rem', fontWeight: 600}}>Prospects with Attention</p>
+                    <div style={{fontSize: '32px', fontWeight: 700}}>12 <span style={{fontSize: '16px', color: '#f59e0b'}}>!</span></div>
+                    <a href="#" style={{fontSize: '12px', color: '#6b7280', textDecoration: 'none'}}>View Details</a>
+                  </div>
+                  <div className="sdr-settings-card" style={{padding: '1.5rem'}}>
+                    <p style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.5rem', fontWeight: 600}}>Positive Replies</p>
+                    <div style={{fontSize: '32px', fontWeight: 700}}>9 <span style={{fontSize: '16px', color: 'green'}}>↗</span></div>
+                    <a href="#" style={{fontSize: '12px', color: '#6b7280', textDecoration: 'none'}}>View Details</a>
+                  </div>
+                  <div className="sdr-settings-card" style={{padding: '1.5rem'}}>
+                    <p style={{fontSize: '12px', color: '#6b7280', marginBottom: '0.5rem', fontWeight: 600}}>Meetings carried</p>
+                    <div style={{fontSize: '32px', fontWeight: 700}}>4 <span style={{fontSize: '16px', color: 'green'}}>↗</span></div>
+                    <a href="#" style={{fontSize: '12px', color: '#6b7280', textDecoration: 'none'}}>View Details</a>
+                  </div>
+                </div>
+
+                <h3 style={{fontSize: '20px', fontWeight: 700, marginBottom: '1rem'}}>My Campaigns:</h3>
+                <div className="sdr-settings-card" style={{padding: '1rem', marginBottom: '2rem'}}>
+                  <table style={{width: '100%', textAlign: 'left', borderCollapse: 'collapse'}}>
+                    <thead>
+                      <tr style={{borderBottom: '1px solid #e5e7eb'}}>
+                        <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Name</th>
+                        <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Status</th>
+                        <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Prospects</th>
+                        <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Outreach</th>
+                        <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Meetings</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{borderBottom: '1px solid #e5e7eb'}}>
+                        <td style={{padding: '1rem 0.5rem'}}>Campaign 1</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Live</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Chennai</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>X Days</td>
+                        <td style={{padding: '1rem 0.5rem'}}></td>
+                      </tr>
+                      <tr style={{borderBottom: '1px solid #e5e7eb'}}>
+                        <td style={{padding: '1rem 0.5rem'}}>Campaign 2</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Live</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Chennai</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>X Days</td>
+                        <td style={{padding: '1rem 0.5rem'}}></td>
+                      </tr>
+                      <tr>
+                        <td style={{padding: '1rem 0.5rem'}}>Campaign 3</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Live</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Chennai</td>
+                        <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>X Days</td>
+                        <td style={{padding: '1rem 0.5rem'}}></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+              {/* Right Side Info */}
+              <div style={{width: '300px'}}>
+                <h3 style={{fontSize: '24px', fontWeight: 700, margin: 0}}>Alex,</h3>
+                <h4 style={{fontSize: '18px', fontWeight: 600, marginBottom: '1.5rem'}}>ACME Robotics</h4>
+
+                <div className="sdr-settings-card" style={{padding: '1.5rem', backgroundColor: '#f9fafb', marginBottom: '1rem', border: 'none'}}>
+                  <p style={{margin: '0 0 0.5rem', fontWeight: 600}}>Alex Chen</p>
+                  <p style={{margin: '0 0 0.5rem', fontWeight: 600}}>alex.chen@acme.io</p>
+                  <p style={{margin: 0, fontWeight: 600}}>(415) 555-0148</p>
+                </div>
+
+                <div className="sdr-settings-card" style={{padding: '1.5rem', backgroundColor: '#f9fafb', marginBottom: '2rem', border: 'none'}}>
+                  <p style={{margin: '0 0 1rem', fontWeight: 600}}>Acme Robotics</p>
+                  <div style={{fontSize: '12px', color: '#6b7280', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                    <span>Industry: Manufacturing</span>
+                    <span>Size: 250-500 employees</span>
+                    <span>Need: CRM rollout</span>
+                    <span>Status: Demo scheduled</span>
+                  </div>
+                </div>
+
+                <div style={{display: 'flex', gap: '1rem'}}>
+                  <button className="sdr-primary-btn" style={{flex: 1, justifyContent: 'center', backgroundColor: '#5bc0be', border: 'none', color: '#111', fontWeight: 600}}>Draft Mail</button>
+                  <button className="sdr-primary-btn" style={{flex: 1, justifyContent: 'center', backgroundColor: '#5bc0be', border: 'none', color: '#111', fontWeight: 600}}>Reject</button>
+                </div>
+              </div>
+            </div>
+
+            <h3 style={{fontSize: '20px', fontWeight: 700, marginBottom: '1rem'}}>Priority Prospects:</h3>
+            <div className="sdr-settings-card" style={{padding: '1rem', backgroundColor: '#f9fafb', border: 'none'}}>
+              <table style={{width: '100%', textAlign: 'left', borderCollapse: 'collapse'}}>
+                <thead>
+                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Name</th>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Company</th>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Campaign</th>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Assigned On</th>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600}}>Priority</th>
+                    <th style={{padding: '1rem 0.5rem', fontWeight: 600, textAlign: 'right'}}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{backgroundColor: '#bce4e1'}}>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Prospect 1</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Company X</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Campaign 1</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>October 2nd</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>High</td>
+                    <td style={{padding: '1rem 0.5rem', textAlign: 'right'}}>
+                      <button onClick={() => navigate('/conversations')} style={{padding: '0.25rem 1rem', borderRadius: '1rem', border: 'none', backgroundColor: '#8accc7', fontWeight: 600, cursor: 'pointer', color: '#111'}}>Review Email</button>
+                    </td>
+                  </tr>
+                  <tr style={{borderBottom: '1px solid #e5e7eb'}}>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Prospect 2</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Company Y</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Campaign 2</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>November 23rd</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Critical</td>
+                    <td style={{padding: '1rem 0.5rem', textAlign: 'right'}}>
+                      <button onClick={() => navigate('/conversations')} style={{padding: '0.25rem 1rem', borderRadius: '1rem', border: 'none', backgroundColor: '#8accc7', fontWeight: 600, cursor: 'pointer', color: '#111'}}>View Activity</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Roy</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Company Z</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Campaign 3</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>December 1st</td>
+                    <td style={{padding: '1rem 0.5rem', fontWeight: 600}}>Low</td>
+                    <td style={{padding: '1rem 0.5rem', textAlign: 'right'}}>
+                      <button onClick={() => navigate('/conversations')} style={{padding: '0.25rem 1rem', borderRadius: '1rem', border: 'none', backgroundColor: '#8accc7', fontWeight: 600, cursor: 'pointer', color: '#111'}}>Open Conversation</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="sdr-app-layout">
       {/* Toast Notification */}
       {toastMessage && <div className="sdr-toast">{toastMessage}</div>}
 
       {/* Left Sidebar */}
-      <Sidebar activeTab="campaigns" onSelectTab={handleNavSelect} />
+      <Sidebar activeTab="campaigns" onSelectTab={handleNavSelect} userRole={user?.role} />
 
       {/* Main Content */}
       <main className="sdr-main">

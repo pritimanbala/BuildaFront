@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { navigate } from '../App.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import Header from '../components/Header.jsx'
+import JoinWorkspace from '../components/JoinWorkspace.jsx'
 import {
   MenuIcon,
   UsersIcon,
@@ -17,6 +18,7 @@ import {
   fetchActiveCampaigns,
   toggleKillSwitch,
   signOutUser,
+  linkAdminCode,
   DEFAULT_STATS,
   DEFAULT_CAMPAIGNS,
 } from '../api.js'
@@ -30,6 +32,10 @@ export default function Dashboard() {
   const [stats, setStats] = useState(DEFAULT_STATS)
   const [campaigns, setCampaigns] = useState(DEFAULT_CAMPAIGNS)
   const [loading, setLoading] = useState(true)
+
+  const [joinCode, setJoinCode] = useState('')
+  const [joinError, setJoinError] = useState('')
+  const [joining, setJoining] = useState(false)
 
   // Load user profile and dashboard stats using axios
   useEffect(() => {
@@ -112,10 +118,22 @@ export default function Dashboard() {
     }
   }
 
+  useEffect(() => {
+    if (user?.role === 'EXECUTIVE' || user?.role === 'EXE') {
+      if (user?.admin_linked) {
+        navigate('/conversations')
+      }
+    }
+  }, [user])
+
+  if (!loading && (user?.role === 'EXECUTIVE' || user?.role === 'EXE') && !user?.admin_linked) {
+    return <JoinWorkspace onLinked={(u) => { setUser(u); navigate('/conversations') }} />
+  }
+
   return (
     <div className="sdr-app-layout">
       {/* Left Sidebar */}
-      <Sidebar activeTab="overview" onSelectTab={handleSelectTab} />
+      <Sidebar activeTab="overview" onSelectTab={handleSelectTab} userRole={user?.role} />
 
       {/* Main Content Area */}
       <main className="sdr-main">
