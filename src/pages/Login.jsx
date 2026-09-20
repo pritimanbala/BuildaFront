@@ -3,7 +3,7 @@ import { AppLink, navigate } from '../App.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
 import PasswordInput from '../components/PasswordInput.jsx'
 import GoogleButton from '../components/GoogleButton.jsx'
-import { API_URL, api, apiError } from '../api.js'
+import { API_URL, signIn, apiError } from '../api.js'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -16,7 +16,7 @@ export default function Login() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setEmailError('Enter a valid email address.')
     setLoading(true); setFormError('')
     try {
-      await api.post('/api/auth/signin', { email: email.trim(), password })
+      await signIn(email.trim(), password)
       navigate('/dashboard')
     } catch (error) {
       setFormError(apiError(error, 'Unable to sign in. Please try again.'))

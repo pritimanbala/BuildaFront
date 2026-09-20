@@ -3,7 +3,7 @@ import { AppLink, navigate } from '../App.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
 import PasswordInput from '../components/PasswordInput.jsx'
 import GoogleButton from '../components/GoogleButton.jsx'
-import { API_URL, api, apiError } from '../api.js'
+import { API_URL, signUp, apiError } from '../api.js'
 
 export default function Signup() {
   const [role, setRole] = useState(null)
@@ -18,7 +18,7 @@ export default function Signup() {
     setLoading(true)
     setFormError('')
     try {
-      await api.post('/api/auth/signup', {
+      await signUp({
         name: name.trim(),
         email: email.trim(),
         password,
